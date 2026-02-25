@@ -7,6 +7,12 @@ description: Create a GitHub pull request with the `gh` CLI from the current bra
 
 Use this skill when the user wants a GitHub pull request created from the current branch via `gh`.
 
+## Scope and Role
+
+- This skill owns **PR creation** (write action) via `gh pr create`.
+- GitHub app tools may overlap on **read/query** tasks (searching PRs, fetching metadata/comments/patches), but they do not replace this creation workflow.
+- Prefer a hybrid flow when helpful: app tools for inspection, this skill for creating the PR, app tools again for post-create inspection.
+
 ## Workflow
 
 1. Confirm you are in a git repository and on a non-default branch.

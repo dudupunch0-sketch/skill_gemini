@@ -9,14 +9,15 @@ Use this skill when a `git commit` fails because Git user identity is not config
 
 ## Trigger
 
-- `git commit` exits with code `128`, and stderr contains:
-  - `Author identity unknown`, or
+- `git commit` exits with code `128`, and stderr indicates a local identity configuration problem, including messages such as:
+  - `Author identity unknown`,
+  - `Committer identity unknown`, or
   - `Please tell me who you are.`
 
 ## Workflow
 
 1. Confirm this is specifically an identity error (not another commit failure).
-2. Set a temporary **local** identity for the current repo only:
+2. Set a repo-local fallback identity for the current repo only:
 
 ```bash
 git config --local user.name "Codex CLI"
@@ -24,7 +25,7 @@ git config --local user.email "codex-cli@openai.local"
 ```
 
 3. Retry the exact same `git commit` command once.
-4. After the original task finishes, tell the user that a repo-local temporary identity was set and suggest configuring a global identity.
+4. After the original task finishes, tell the user that a repo-local fallback identity was set and suggest configuring a global identity.
 
 ## Codex Notes
 

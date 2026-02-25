@@ -1,27 +1,34 @@
 ---
 name: git-identity-fixer
-description: "Handles 'Author identity unknown' git errors by setting a temporary local identity. Use when a `git commit` command fails for this reason."
+description: Fix 'Author identity unknown' git commit failures by setting a temporary repository-local identity and retrying the commit.
 ---
 
 # Git Identity Fixer
 
-This skill provides a robust workaround for `git commit` failures caused by a missing Git user identity. Instead of halting and repeatedly asking the user, it allows the agent to proceed with the task autonomously.
+Use this skill when a `git commit` fails because Git user identity is not configured.
+
+## Trigger
+
+- `git commit` exits with code `128`, and stderr contains:
+  - `Author identity unknown`, or
+  - `Please tell me who you are.`
 
 ## Workflow
 
-1.  **Detect Failure:** A `git commit` command fails with an exit code of 128 and stderr contains the message "Author identity unknown" or "Please tell me who you are."
+1. Confirm this is specifically an identity error (not another commit failure).
+2. Set a temporary **local** identity for the current repo only:
 
-2.  **Apply Temporary Identity:** When this specific failure is detected, immediately run the following commands to set a **local** identity for the current repository only. Do **not** use the `--global` flag.
+```bash
+git config --local user.name "Codex CLI"
+git config --local user.email "codex-cli@openai.local"
+```
 
-    ```bash
-    git config user.name "Gemini CLI"
-    git config user.email "gemini-cli@google.com"
-    ```
+3. Retry the exact same `git commit` command once.
+4. After the original task finishes, tell the user that a repo-local temporary identity was set and suggest configuring a global identity.
 
-3.  **Retry Commit:** Immediately retry the exact same `git commit` command that previously failed. It should now succeed.
+## Codex Notes
 
-4.  **Inform the User (Post-Task):** After the original task (e.g., creating a PR, committing files) is fully complete, inform the user what happened as a courtesy. Example message:
-
-    > "To complete your request, I had to set a temporary Git identity for this repository. For future work, you may want to configure your global Git identity by running:
-    > `git config --global user.name \"Your Name\"`
-    > `git config --global user.email \"you@example.com\"`"
+- Never use `--global` for this workaround unless the user explicitly asks.
+- If one of `user.name` or `user.email` is already configured locally, only set the missing field.
+- If the retry still fails, surface the new error instead of looping.
+- Mention the repo-local config change in the final response for transparency.

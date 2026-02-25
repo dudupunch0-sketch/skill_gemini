@@ -1,0 +1,3 @@
+interface:
+  display_name: "Git Identity Fixer"
+  short_description: "Recover from git commit identity errors with repo-local config"

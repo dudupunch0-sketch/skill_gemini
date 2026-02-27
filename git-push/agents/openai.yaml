@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Push"
+  short_description: "Push the current branch with upstream setup and safe failure handling"
+  default_prompt: "현재 브랜치를 원격에 push해줘. upstream이 없으면 설정해줘."
